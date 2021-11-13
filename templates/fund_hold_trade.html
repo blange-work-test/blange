@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+
+<body>
+	<div style="height: 40px;"></div>
+	<div style="width: 960px;" align="center">
+
+        <div>
+            <a href="http://127.0.0.1:8000/fund-hold/">返回持有页面</a>
+            <a href="http://127.0.0.1:8000/fund-hold/trade/add-form/?id={{ fund_hold.id }}">新增交易</a><br>
+            持有id：{{ fund_hold.id }}
+            基金：{{ fund_hold.name }}
+            持仓：{{ fund_hold.hold }}
+            持有收益：{{ fund_hold.income }}<br>
+            6个月增长率：{{ fund_hold.sm_rate }}
+            持有份额：{{ fund_hold.share }}
+            成本价: {{ fund_hold.cost_value }}
+            类型: {{ fund_hold.type }}
+
+            </div><br>
+
+        <table border="1">
+			<tr>
+				<th>id
+				</th>
+				<th> 日期
+				</th>
+				<th> 交易类型
+				</th>
+				<th> 金额
+				</th>
+                <th>份额</th>
+                <th>状态</th>
+				<th>
+					操作
+				</th>
+			</tr>
+            {% for r in trade_history %}
+			<tr>
+				<td>
+					{{ r.id }}
+				</td>
+
+				<td>
+                    {{ r.day }}
+				</td>
+                <td>
+                    {{ r.type }}
+				</td>
+                <td>
+                    {{ r.hold }}
+				</td>
+                <td>
+                    {{ r.share }}
+				</td>
+                <td>
+                    {{ r.status }}
+				</td>
+
+				<td>
+					<a href="http://127.0.0.1:8000/fund-hold/trade/update-form?id={{ r.id }}">交易更新</a>
+				</td>
+
+            </tr>
+            {% endfor %}
+
+		</table>
+
+	</div>
+
+</body>
+
+</html>
