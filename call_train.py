@@ -23,7 +23,7 @@ def update_market_train(market_id,sm_rate):
     # 关联space查询
     db.ping(reconnect=True)
     cur.execute(
-        "select  space.id as space_id  from space where market_id = %d " % (market_id))
+        "select  space.id as space_id  from space where market_id = '%s' " % (market_id))
     db_space = cur.fetchall()
     # space 更新
     for s in db_space:

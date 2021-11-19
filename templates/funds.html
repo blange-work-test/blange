@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+
+<body>
+	<div style="height: 40px;"></div>
+    {% if action == 'list-html' %}
+	<div style="width: 960px;" align="center">
+    <a href="http://127.0.0.1:8000/fund-hold/">回到持有列表</a>
+		<a href="http://127.0.0.1:8000/funds/add-html/">新增基金</a>
+        <a href="http://127.0.0.1:8000/funds/reptile/">爬虫更新</a>
+		<table border="1">
+			<tr>
+				<th>
+                    基金id
+				</th>
+				<th>
+					基金名称
+				</th>
+				<th>
+					基金经理
+				</th>
+				<th>
+					创建时间
+				</th>
+                <th>
+					更新时间
+				</th>
+
+				<th>
+					操作
+				</th>
+			</tr>
+            {% for r in fund %}
+			<tr>
+
+				<td>
+					{{ r.id }}
+				</td>
+				<td>
+					{{ r.name }}
+				</td>
+				<td>
+                    {{ r.manager }}
+				</td>
+				<td>
+                    {{ r.created }}
+				</td>
+				<td>
+                    {{ r.updated }}
+				</td>
+				<td>
+					<button>持有更新</button>
+				</td>
+
+            </tr>
+            {% endfor %}
+
+		</table>
+
+
+	</div>
+    {% elif action == 'add-html' %}
+        <div style="width: 960px;" align="center">
+		<form action="/funds/" method="post">
+            <input type="hidden" name="_method" value="POST" />
+			基金代号: <input type="text" name="id" value = "1"><br>
+			基金名字: <input type="text" name="name" value = "1"><br>
+			基金经理: <input type="text" name="manager" value = "1"><br>
+			<input type="submit" value="提交">
+		</form>
+
+	</div>
+    {% endif %}
+</body>
+
+</html>

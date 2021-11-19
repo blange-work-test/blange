@@ -8,104 +8,26 @@
 
 <body>
 	<div style="height: 40px;"></div>
-	<div style="width: 1920px;" align="left">
-        <div>space：{{ space_msg.user }}   本金：{{ space_msg.principal }}   持仓：{{ space_msg.hold }}   持有收益：{{ space_msg.hold_income }}   累计收益：{{ space_msg.income }}
-		<a href="http://127.0.0.1:8000/fund/">基金列表</a>
-        <a href="http://127.0.0.1:8000/fund-hold/add-form/">新增持有</a>
-        <a href="http://127.0.0.1:8000/space/update-form/">个人材料更新</a>
-        <a href="http://127.0.0.1:8000/market/update-form/">市场更新</a>
-        </div>
-		<table border="1" >
-			<tr>
-				<th>基金id
-				</th>
-				<th>基金经理
-				</th>
-				<th>基金名称
-				</th>
-				<th>持仓
-				</th>
-                <th>当前值
-				</th>
-                <th>P5止盈值
-				</th>
-                <th>P5加仓值
-				</th>
-                <th>日平仓份额
-				</th>
-                <th>持有收益</th>
-                <th>6个月增长率（%）</th>
-                <th>类型</th>
-                <th>理想持仓</th>
-                <th>每日投资</th>
-                <th>创建时间</th>
-                <th>
-					更新时间
-				</th>
+	<div style="width: 960px;" align="center">
+        <form action="/fund-holds/{{ fund_hold.id }}" method="post">
+			持有id: <input type = "hidden" name = "id" value = "{{ fund_hold.id }} "> {{ fund_hold.id }}<br>
+            基金：{{ fund_hold.name }}<br>
+            持仓：{{ fund_hold.hold }}<br>
+            持有收益：{{ fund_hold.income }}<br>
+            6个月增长率：{{ fund_hold.sm_rate }}<br>
+            持有份额：<input type="text" name="share" value = "{{ fund_hold.share }}"><br>
+            成本价: <input type="text" name="cost_value" value = "{{ fund_hold.cost_value }}"><br>
+            类型: <select type="text" name="type" >
 
-				<th>
-					操作
-				</th>
-			</tr>
-            {% for r in fund_hold_list %}
-			<tr>
-				<td>
-					{{ r.fund_id }}
-				</td>
 
-				<td>
-                    {{ r.manager }}
-				</td>
-                <td>
-                    {{ r.name }}
-				</td>
-                <td>
-                    {{ r.hold }}
-				</td>
-                <td>
-                    {{ r.value }}
-				</td>
-                <td>
-                    {{ r.t5_value }}({{ r.t5_diff_value }}%)
-				</td>
-                <td>
-                    {{ r.b5_value }}({{ r.b5_diff_value }}%)
-				</td>
-                <td>
-                    {{ r.trade_share }}
-				</td>
-                <td>
-                    {{ r.income }}
-				</td>
-                <td>
-                    {{ r.sm_rate}}
-                </td>
-				<td>
-                    {{ r.type }}
-				</td>
+                <option value = "auto_invest" {% if fund_hold.type == 'auto_invest' %}selected = "selected" {% else %} {% endif %}>定投</option>
+                <option value = "price_invest" {% if fund_hold.type == 'price_invest' %}selected = "selected" {% else %} {% endif %}>定价投</option>
+                <option value = "clearance" {% if fund_hold.type == 'clearance' %}selected = "selected" {% else %} {% endif %}>清仓</option>
 
-                <td>
-                    {{ r.ideal_hold }}
-                </td>
-                <td>
-                    {{ r.day_invest }}
-                </td>
-                <td>
-                    {{ r.created }}
-				</td>
-				<td>
-                    {{ r.updated }}
-				</td>
-				<td>
-					<a href="http://127.0.0.1:8000/fund-hold/update-form?id={{ r.id }}">持有更新</a><br>
-                    <a href="http://127.0.0.1:8000/fund-hold/trade?id={{ r.id }}">交易</a>
-				</td>
+        </select><br>
+        <input type="submit" value="提交">
 
-            </tr>
-            {% endfor %}
-
-		</table>
-
+		</form>
 
 	</div>
 

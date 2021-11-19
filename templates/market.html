@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+	<div style="height: 40px;"></div>
+	<div style="width: 960px;" align="center">
+		<form action="/markets/{{ id }}" method="post">
+            <input type="hidden" name="_method" value="PUT" />
+			market id: <input type = "hidden" name = "id" value = "{{ id }} "> {{ id }}<br>
+            市场: <input type = "hidden" name = "name" value = "{{ name }} "> {{ name }}<br>
+			6个月收益率: <input type="text" name="sm_rate" value = "{{ sm_rate }}"><br>
+			<input type="submit" value="提交">
+		</form>
+
+	</div>
+
+</body>
+</html>
