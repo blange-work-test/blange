@@ -18,7 +18,6 @@ from fund.views import market,space,fund_holds,index,fund_hold,fund_hold_trades,
 from django.urls import path,re_path
 # v1.0 方法
 from django.contrib import admin
-# from django.urls import path
 
 
 
@@ -33,27 +32,7 @@ urlpatterns = [
     re_path(r'^markets/(?P<market_id>[0-9]+)[\/]?(?P<action>[a-z0-9-]*)[\/]?', market),
     re_path(r'^spaces/(?P<space_id>[0-9]+)[\/]?(?P<action>[a-z0-9-]*)[\/]?',space),
     # v1.0 路由
-    # path('', fund_hold_list),
     path('admin/', admin.site.urls),
-    # path('fund/',fund_list),
-    # path('fund/robot-update/post',robot_update),
-    # path('fund/add-form/',fund_add_form),
-    # path('fund/add-form/post',add_fund),
-    # path('fund-hold/',fund_hold_list),
-    # path('fund-hold/add-form/',fund_hold_add_form),
-    # path('fund-hold/update-form',fund_hold_update_form),
-    # path('fund-hold/update-form/post',update_fund_hold),
-    # path('fund-hold/add-form/post',add_fund_hold),
-    # path('fund-hold/trade/',trade_list),
-    # path('fund-hold/trade/add-form/',trade_add_form),
-    # path('fund-hold/trade/update-form/',trade_update_form),
-    # path('fund-hold/trade/add-form/post',add_trade),
-    # path('fund-hold/trade/update-form/post',update_trade),
 
-
-    # path('space/update-form/',space_update_form),
-    # path('space/update-form/post',update_space),
-    # path('market/update-form/',market_update_form),
-    # path('market/update-form/post',update_market),
 
 ]
