@@ -10,9 +10,13 @@
 	<div style="height: 40px;"></div>
     {% if action == 'list-html' %}
 	<div style="width: 960px;" align="center">
-
         <div>
-            <a href="http://127.0.0.1:8000/fund-holds/">返回持有页面</a>
+            {% if error != 'None' %}
+                <h1>{{ error }}</h1>
+                {% endif %}
+        </div>
+        <div>
+            <a href="http://127.0.0.1:8000/fund-holds/list-html">返回持有页面</a>
             <a href="http://127.0.0.1:8000/fund-holds/{{ fund_hold.id }}/trades/add-html/?id={{ fund_hold.id }}">新增交易</a><br>
             持有id：{{ fund_hold.id }}
             基金：{{ fund_hold.name }}

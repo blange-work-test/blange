@@ -1,0 +1,63 @@
+*** Starting uWSGI 2.0.20 (64bit) on [Sat Nov 27 23:56:14 2021] ***
+compiled with version: Apple LLVM 12.0.5 (clang-1205.0.22.9) on 27 November 2021 14:03:35
+os: Darwin-20.5.0 Darwin Kernel Version 20.5.0: Sat May  8 05:10:33 PDT 2021; root:xnu-7195.121.3~9/RELEASE_X86_64
+nodename: JINFANLAN-MB0
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 12
+current working directory: /Users/blangeblue/PycharmProjects/blange
+writing pidfile to fund.pid
+detected binary path: /Users/blangeblue/PycharmProjects/blange/venv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /Users/blangeblue/PycharmProjects/blange
+your processes number limit is 2784
+your memory page size is 4096 bytes
+detected max file descriptor number: 10240
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.9.6 (v3.9.6:db3ff76da1, Jun 28 2021, 11:49:53)  [Clang 6.0 (clang-600.0.57)]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x7fb25fe063a0
+The -s/--socket option is missing and stdin is not a socket.
+*** Starting uWSGI 2.0.20 (64bit) on [Sun Nov 28 00:00:30 2021] ***
+compiled with version: Apple LLVM 12.0.5 (clang-1205.0.22.9) on 27 November 2021 14:03:35
+os: Darwin-20.5.0 Darwin Kernel Version 20.5.0: Sat May  8 05:10:33 PDT 2021; root:xnu-7195.121.3~9/RELEASE_X86_64
+nodename: JINFANLAN-MB0
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 12
+current working directory: /Users/blangeblue/PycharmProjects/blange
+writing pidfile to fund.pid
+detected binary path: /Users/blangeblue/PycharmProjects/blange/venv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /Users/blangeblue/PycharmProjects/blange
+your processes number limit is 2784
+your memory page size is 4096 bytes
+detected max file descriptor number: 10240
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.9.6 (v3.9.6:db3ff76da1, Jun 28 2021, 11:49:53)  [Clang 6.0 (clang-600.0.57)]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x7fce22508140
+The -s/--socket option is missing and stdin is not a socket.
+*** Starting uWSGI 2.0.20 (64bit) on [Sun Nov 28 00:01:15 2021] ***
+compiled with version: Apple LLVM 12.0.5 (clang-1205.0.22.9) on 27 November 2021 14:03:35
+os: Darwin-20.5.0 Darwin Kernel Version 20.5.0: Sat May  8 05:10:33 PDT 2021; root:xnu-7195.121.3~9/RELEASE_X86_64
+nodename: JINFANLAN-MB0
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 12
+current working directory: /Users/blangeblue/PycharmProjects/blange
+writing pidfile to fund.pid
+detected binary path: /Users/blangeblue/PycharmProjects/blange/venv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /Users/blangeblue/PycharmProjects/blange
+your processes number limit is 2784
+your memory page size is 4096 bytes
+detected max file descriptor number: 10240
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.9.6 (v3.9.6:db3ff76da1, Jun 28 2021, 11:49:53)  [Clang 6.0 (clang-600.0.57)]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x7f9dabc0b490
+The -s/--socket option is missing and stdin is not a socket.

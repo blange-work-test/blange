@@ -17,6 +17,100 @@ from sql_meta import fund_hold_lj_income as sql_fund_hold_lj_income
 from sql_meta import type_name as sql_type_name
 from sql_meta import fund_hold_lj_ideal_hold as sql_fund_hold_lj_ideal_hold
 from sql_meta import fund_hold_lj_day_invest as sql_fund_hold_lj_day_invest
+# v2.1 方法------------------------------------------------------------------
+## 增加异常处理
+# fund_hold_trade
+def fund_hold_trade(request,fund_hold_id,trade_id,action):
+    r_method = request.method
+    if r_method == 'GET':
+        if action == 'update-html':
+            id = int(request.GET.get('id', ''))
+            cur = db.cursor(pymysql.cursors.DictCursor)
+            db.ping(reconnect=True)
+            cur.execute("select  trade_history.fund_hold_id as fund_hold_id, \
+                 trade_history.id as id, \
+                 FROM_UNIXTIME(trade_history.day,'%%Y-%%m-%%d') as day, \
+                 trade_history.hold as hold ,\
+                 trade_history.share as share ,\
+                 trade_history.status as status \
+                 from trade_history \
+                 where id = %d " % (id))
+            trade = cur.fetchall()
+            print(trade)
+            db.close()
+            return render(request, 'fund_hold_trade.html', {'request_type': 'update', 'trade_msg': trade[0]})
+    if r_method == 'POST':
+        try:
+            # 请求信息获取
+            r_id = int(request.POST.get('id', ''))
+            r_fund_hold_id = int(request.POST.get('fund_hold_id', ''))
+            r_trade_status = str(request.GET.get('status', ''))
+            print(r_trade_status)
+            if r_trade_status == 'in-trading':
+                r_trade_hold = 0
+                r_trade_share = float(request.POST.get('share', ''))
+            else:
+                r_trade_share = 0
+                r_trade_hold = float(request.POST.get('hold', ''))
+                print(r_trade_hold)
+            update_trade_train(r_id, r_trade_hold, r_trade_share)
+            return redirect('http://127.0.0.1:8000/fund-holds/%d/trades/list-html?id=%d' % (r_fund_hold_id,r_fund_hold_id))
+        except:
+            return redirect('http://127.0.0.1:8000/fund-holds/%d/trades/list-html?id=%d&error=%s' % (r_fund_hold_id, r_fund_hold_id,'提交失败'))
+# fund_hold_trades
+def fund_hold_trades(request,fund_hold_id,action):
+    r_method = request.method
+    if r_method == 'GET':
+        if action == 'list-html':
+            id = int(request.GET.get('id', ''))
+            # 错误获取
+            error = str(request.GET.get('error'))
+            print(error)
+            cur = db.cursor(pymysql.cursors.DictCursor)
+            db.ping(reconnect=True)
+            cur.execute("select fund_hold.id as id ,\
+                fund.name as name ,\
+                fund_hold.hold as hold ,\
+                (fund.value - fund_hold.cost_value)*fund_hold.share as income, \
+                fund.sm_rate as sm_rate,\
+                fund_hold.share as share,\
+                fund_hold.cost_value as cost_value,\
+                fund_hold.type as type  \
+                from fund_hold left join fund on fund_hold.fund_id = fund.id where fund_hold.id = %d " % (id))
+            fund_hold = cur.fetchall()
+            print(fund_hold)
+            db.ping(reconnect=True)
+            cur.execute(
+                "select trade_history.id as id ,FROM_UNIXTIME(trade_history.day,'%%Y-%%m-%%d') as day,trade_history.hold as hold ,trade_history.share as share,trade_history.status as status from trade_history where fund_hold_id = %d  order by trade_history.day desc" % (
+                    id))
+            trade_history = cur.fetchall()
+            print(trade_history)
+            db.close()
+            return render(request, 'fund_hold_trades.html', {'fund_hold': fund_hold[0], 'trade_history': trade_history,'action':action,'error':error})
+        if action == 'add-html':
+            id = request.GET.get('id', '')
+            return render(request, 'fund_hold_trades.html', {'request_type': 'add', 'fund_hold_id': id,'action':action})
+    if r_method == 'POST':
+        # 请求信息获取
+        r_id = int(request.POST.get('id', ''))
+        r_trade_day = int(time.mktime(time.strptime(request.POST.get('day', ''), "%Y-%m-%d")))
+        r_trade_share = float(request.POST.get('share', ''))
+        r_trade_hold = float(request.POST.get('hold', ''))
+        if r_trade_hold > 0:
+            # 买入
+            if r_trade_share > 0:
+                r_trade_status = 'in-trade'
+            else:
+                r_trade_status = 'in-trading'
+        else:
+            if r_trade_hold < 0:
+                r_trade_status = 'out-trade'
+            else:
+                r_trade_status = 'out-trading'
+
+        # 增加交易
+        add_trade_train(r_id, r_trade_day, r_trade_hold, r_trade_share, r_trade_status)
+        return redirect('http://127.0.0.1:8000/fund-holds/%s/trades/list-html?id=%d' % (fund_hold_id,r_id))
 # v2.0 方法------------------------------------------------------------------
 # index
 def index(request):
@@ -179,92 +273,8 @@ def fund_hold(request,fund_hold_id,action):
         db.commit()
         db.close()
         return redirect('http://127.0.0.1:8000/fund-holds/list-html')
-# fund_hold_trades
-def fund_hold_trades(request,fund_hold_id,action):
-    r_method = request.method
-    if r_method == 'GET':
-        if action == 'list-html':
-            id = int(request.GET.get('id', ''))
-            cur = db.cursor(pymysql.cursors.DictCursor)
-            db.ping(reconnect=True)
-            cur.execute("select fund_hold.id as id ,\
-                fund.name as name ,\
-                fund_hold.hold as hold ,\
-                (fund.value - fund_hold.cost_value)*fund_hold.share as income, \
-                fund.sm_rate as sm_rate,\
-                fund_hold.share as share,\
-                fund_hold.cost_value as cost_value,\
-                fund_hold.type as type  \
-                from fund_hold left join fund on fund_hold.fund_id = fund.id where fund_hold.id = %d " % (id))
-            fund_hold = cur.fetchall()
-            print(fund_hold)
-            db.ping(reconnect=True)
-            cur.execute(
-                "select trade_history.id as id ,FROM_UNIXTIME(trade_history.day,'%%Y-%%m-%%d') as day,trade_history.hold as hold ,trade_history.share as share,trade_history.status as status from trade_history where fund_hold_id = %d  order by trade_history.day desc" % (
-                    id))
-            trade_history = cur.fetchall()
-            print(trade_history)
-            db.close()
-            return render(request, 'fund_hold_trades.html', {'fund_hold': fund_hold[0], 'trade_history': trade_history,'action':action})
-        if action == 'add-html':
-            id = request.GET.get('id', '')
-            return render(request, 'fund_hold_trades.html', {'request_type': 'add', 'fund_hold_id': id,'action':action})
-    if r_method == 'POST':
-        # 请求信息获取
-        r_id = int(request.POST.get('id', ''))
-        r_trade_day = int(time.mktime(time.strptime(request.POST.get('day', ''), "%Y-%m-%d")))
-        r_trade_share = float(request.POST.get('share', ''))
-        r_trade_hold = float(request.POST.get('hold', ''))
-        if r_trade_hold > 0:
-            # 买入
-            if r_trade_share > 0:
-                r_trade_status = 'in-trade'
-            else:
-                r_trade_status = 'in-trading'
-        else:
-            if r_trade_hold < 0:
-                r_trade_status = 'out-trade'
-            else:
-                r_trade_status = 'out-trading'
 
-        # 增加交易
-        add_trade_train(r_id, r_trade_day, r_trade_hold, r_trade_share, r_trade_status)
-        return redirect('http://127.0.0.1:8000/fund-holds/%s/trades/list-html?id=%d' % (fund_hold_id,r_id))
-# fund_hold_trade
-def fund_hold_trade(request,fund_hold_id,trade_id,action):
-    r_method = request.method
-    if r_method == 'GET':
-        if action == 'update-html':
-            id = int(request.GET.get('id', ''))
-            cur = db.cursor(pymysql.cursors.DictCursor)
-            db.ping(reconnect=True)
-            cur.execute("select  trade_history.fund_hold_id as fund_hold_id, \
-                 trade_history.id as id, \
-                 FROM_UNIXTIME(trade_history.day,'%%Y-%%m-%%d') as day, \
-                 trade_history.hold as hold ,\
-                 trade_history.share as share ,\
-                 trade_history.status as status \
-                 from trade_history \
-                 where id = %d " % (id))
-            trade = cur.fetchall()
-            print(trade)
-            db.close()
-            return render(request, 'fund_hold_trade.html', {'request_type': 'update', 'trade_msg': trade[0]})
-    if r_method == 'POST':
-        # 请求信息获取
-        r_id = int(request.POST.get('id', ''))
-        r_fund_hold_id = int(request.POST.get('fund_hold_id', ''))
-        r_trade_status = str(request.GET.get('status', ''))
-        print(r_trade_status)
-        if r_trade_status == 'in-trading':
-            r_trade_hold = 0
-            r_trade_share = float(request.POST.get('share', ''))
-        else:
-            r_trade_share = 0
-            r_trade_hold = float(request.POST.get('hold', ''))
-            print(r_trade_hold)
-        update_trade_train(r_id, r_trade_hold, r_trade_share)
-        return redirect('http://127.0.0.1:8000/fund-holds/%d/trades/list-html?id=%d' % (r_fund_hold_id,r_fund_hold_id))
+
 # funds
 def funds(request,action):
     r_method = request.method
