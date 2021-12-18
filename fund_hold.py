@@ -4,12 +4,14 @@ def update_hold(cur,id):
     cur.execute("select * from fund_hold  where id = %d" % (id))
     db_fund_hold = cur.fetchall()
     db_fund_id = str(db_fund_hold[0].get('fund_id'))
+    print(db_fund_id)
     db_fund_hold_share = float(db_fund_hold[0].get('share'))
     db_fund_hold_id =int(db_fund_hold[0].get('id'))
     # 获取value
     db.ping(reconnect=True)
-    cur.execute("select  * from fund where id = %s " % (db_fund_id))
+    cur.execute("select  * from fund where id = '%s' " % (db_fund_id))
     db_fund = cur.fetchall()
+    print(db_fund)
     db_fund_value = float(db_fund[0].get('value'))
     # 获取交易中 hold
     db.ping(reconnect=True)

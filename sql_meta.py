@@ -27,7 +27,7 @@ fund_hold_lj_short_modulus = '(case when fund.sm_rate > 0 then (fund.sm_rate+0.2
 # v long_modulus->fund_hold.share,fund.value,fund_hold.cost_value,fund_hold.hold
 fund_hold_lj_long_modulus = '(case when fund_hold.share = 0 then 0 when (fund_hold.share * (fund.value-fund_hold.cost_value)) < (-0.2*fund_hold.hold) then 0 else ((fund_hold.share * (fund.value-fund_hold.cost_value)) /fund_hold.hold +0.2) end)'
 # vv product->space_modulus,short_modulus,long_modulus
-fund_hold_lj_product = '(%s*%s*%s)'%(fund_hold_lj_space_modulus,fund_hold_lj_short_modulus,fund_hold_lj_long_modulus)
+fund_hold_lj_product = "(case when fund_hold.type in ('clearance','price_invest') then 0 else (%s*%s*%s) end )"%(fund_hold_lj_space_modulus,fund_hold_lj_short_modulus,fund_hold_lj_long_modulus)
 # vvv product_percent-> product,space.sum_product
 fund_hold_lj_product_percent = '(%s/space.sum_product)'% (fund_hold_lj_product)
 # vvvv ideal_hold->product_percent,sapce.space_ideal_hold

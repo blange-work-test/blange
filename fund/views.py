@@ -17,6 +17,10 @@ from sql_meta import fund_hold_lj_income as sql_fund_hold_lj_income
 from sql_meta import type_name as sql_type_name
 from sql_meta import fund_hold_lj_ideal_hold as sql_fund_hold_lj_ideal_hold
 from sql_meta import fund_hold_lj_day_invest as sql_fund_hold_lj_day_invest
+from space import update_hold as space_update_hold
+from space import update_hold_income as space_update_hold_income
+from space import update_sum_product as space_update_sum_product
+from space import update_reinvest_modulus as space_update_reinvest_modulus
 # v2.1 方法------------------------------------------------------------------
 ## 增加异常处理
 # fund_hold_trade
@@ -160,6 +164,10 @@ def space(request,space_id,action):
             cur = db.cursor(pymysql.cursors.DictCursor)
             db.ping(reconnect=True)
             cur.execute("update space set  principal = %f,income = %f where id = %d" % (r_principal, r_income, r_space_id))
+            space_update_hold(cur,r_space_id)
+            space_update_sum_product(cur,r_space_id)
+            space_update_reinvest_modulus(cur,r_space_id)
+            space_update_hold_income(cur,r_space_id)
             db.commit()
             db.close()
             return redirect('http://127.0.0.1:8000/')
@@ -238,7 +246,7 @@ def fund_holds(request,action):
         # a-1 fund_hold基金添加
         db.ping(reconnect=True)
         cur.execute(
-            "insert into fund_hold(space_id,fund_id,type,hold,income,sm_rate,share) values(%d,'%s','%s',0,0,0,0)" % (
+            "insert into fund_hold(space_id,fund_id,type,hold,cost_value,share) values(%d,'%s','%s',0,0,0)" % (
             r_space_id, r_fund_id, r_type))
         db.commit()
         db.close()
@@ -302,7 +310,7 @@ def funds(request,action):
             r_manager = request.POST.get('manager', '')
             cur = db.cursor(pymysql.cursors.DictCursor)
             db.ping(reconnect=True)
-            cur.execute("insert into fund (id,name,manager,market_id) values ('%s','%s','%s','000300')" % (
+            cur.execute("insert into fund (id,name,manager,market_id,sm_rate,value) values ('%s','%s','%s','000300',0,0)" % (
             str(r_id), str(r_name), str(r_manager)))
             db.commit()
             db.close()

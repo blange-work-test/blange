@@ -1,4 +1,80 @@
+# 上云
+
+```mermaid
+graph LR
+-a(http:80)
+-b(host)
+-a --> -b
+subgraph ecs
+a[nginx]
+-b -->|host:port|a
+b[uwsgi]
+a -->|CHDIR:SCRPT| b
+c[django]
+b --> c
+end
+subgraph rds
+d[mysql]
+end
+c -.- d
+```
+
+## FILE
+
+- etc
+  - nginx
+    - nginx.conf
+- home
+  - admin
+    - blange
+      - blange
+        - wsgi.py
+      - fund
+  - uwsgi.ini
+
+## nginx
+
+```
+server{
+                listen 80;
+                server_name 120.77.40.158;
+                location /{
+                        include uwsgi_params;
+                        uwsgi_pass 127.0.0.1:3031;
+                        uwsgi_param UWSGI_SCRIPT myproject.wsgi ;
+                        uwsgi_param UWSGI_CHDIR /home/admin/foobar/myproject/ ;
+                }
+        }
+```
+
+## uswgi.ini
+
+```
+[uwsgi]
+socket = 127.0.0.1:3031
+chdir = /home/admin/foobar/myproject/
+wsgi-file = myproject/wsgi.py
+processes = 4
+threads = 2
+stats = 127.0.0.1:9191
+```
+
+# cli
+
+```python
+pip3 install django
+```
+
+```django
+django-admin startproject cdc
+django-admin startapp cdc
+python manage.py runserver
+```
+
+
+
 # restapi：
+
 ## market
 
 ### :market_id`market`

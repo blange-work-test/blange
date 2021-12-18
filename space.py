@@ -1,16 +1,14 @@
 from fund_mysql import db
-from sql_meta import fund_hold_lj_space_modulus as space_modulus
-from sql_meta import fund_hold_lj_long_modulus as long_modulus
-from sql_meta import  fund_hold_lj_short_modulus as short_modulus
+from sql_meta import fund_hold_lj_product as product
 def update_sum_product(cur,space_id):
     print(space_id)
     db.ping(reconnect=True)
-    cur.execute(" select sum(%s * %s * %s)   as sum_product  \
+    cur.execute(" select sum(%s)   as sum_product  \
                                 from fund_hold \
                             left join space on space.id = fund_hold.space_id \
                 left join fund on fund.id = fund_hold.fund_id \
                                 where fund_hold.type != 'clearance'  and space.id = %d " \
-                % (space_modulus, short_modulus, long_modulus, space_id) \
+                % (product, space_id) \
                 )
     db_space = cur.fetchall()
     print(db_space)

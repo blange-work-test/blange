@@ -105,49 +105,64 @@ def robot_train():
     db.ping(reconnect=True)
     cur.execute("select id from fund  order by created desc ")
     fund_list = cur.fetchall()
+    
     for f in fund_list:
+        # 已有数据获取
         fund_id = f.get('id')
         db.ping(reconnect=True)
         cur.execute("select * from fund_commit where fund_id = %s order by time desc limit 1" % (fund_id))
         release_value = cur.fetchall()
-        release_value_time = release_value[0].get("time")
-        print(release_value_time)
-        # fund_commit 更新
+        cur.execute("select * from fund_commit where fund_id = %s order by time asc limit 1" % (fund_id))
+        begin_value = cur.fetchall()
+        # 数据爬虫
         url = "https://fund.eastmoney.com/pingzhongdata/%s.js" % (fund_id)
+        # url = "https://fund.eastmoney.com/pingzhongdata/012348.js"
         strhtml = requests.get(url)
-        print(strhtml.text)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        sm_rate = float(re.findall(r"var[\s]*syl_6y[\s]*=[\s]*\"([\S]+)\"", strhtml.text)[0]) / 100
-        print(sm_rate)
-
-        value_list_str = re.findall(r'({"x":%s[\S]+])+;\/\*累计净值走势\*\/' % (str(release_value_time*1000)), strhtml.text)
-        print(value_list_str)
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        if len(value_list_str):
-
-            value_list = ast.literal_eval('['+ value_list_str[0])
-            print(value_list)
+        # fund_commit 更新
+        print(f)
+        if release_value:
+            release_value_time = release_value[0].get("time")
+            value_list_str = re.findall(r'{"x":%s,"y":[0-9\.\"]*,"equityReturn":[0-9.\-\"]*,"unitMoney":[0-9.\-\"]*},({[\S]+])+;\/\*累计净值走势\*\/' % (str(release_value_time * 1000)),strhtml.text)
+            if len(value_list_str):
+                value_list = ast.literal_eval('[' + value_list_str[0])
+            else:
+                value_list = []
+        else:
+            value_list_str = re.findall(r'Data_netWorthTrend[\s]=[\s](\[[\S]+\]);\/\*累计净值走势\*\/',strhtml.text)
+            value_list = ast.literal_eval(value_list_str[0])
+            release_value = float(value_list[0].get("y"))
+            print(release_value)
+            begin_value = float(value_list[-1].get("y"))
+            print(begin_value)
+        if len(value_list):
             for day in value_list:
                 value_time = int(day.get("x")) / 1000
                 value_value = float(day.get("y"))
-                if len(release_value):
-                    if value_time > release_value_time:
-                        db.ping(reconnect=True)
-                        cur.execute("insert into fund_commit (`fund_id`,`time`,`value`) values ('%s',%d,%f) " % (fund_id, value_time, value_value))
+                db.ping(reconnect=True)
+                cur.execute("insert into fund_commit (`fund_id`,`time`,`value`) values ('%s',%d,%f) " % (fund_id, value_time, value_value))
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        # sm_rate 更新
+        sm_rate = re.findall(r"var[\s]*syl_6y[\s]*=[\s]*\"([\S]+)\"", strhtml.text)
+        print(sm_rate)
+        if len(sm_rate) :
+            sm_rate = float(sm_rate[0])/100
+        else:
+            sm_rate = (release_value-begin_value)/(begin_value*100)
 
-                else:
-                    db.ping(reconnect=True)
-                    cur.execute("insert into fund_commit (`fund_id`,`time`,`value`) values ('%s',%d,%f) " % (fund_id, value_time, value_value))
 
-            sm_time = time.mktime(time.localtime()) - 15638400
-            fund_update_t5_value(cur,fund_id,sm_time)
-            fund_update_b5_value(cur,fund_id,sm_time)
-            fund_update_value(cur,fund_id,sm_time)
-            fund_update_sm_rate(cur,fund_id,sm_rate)
+
+
+        sm_time = time.mktime(time.localtime()) - 15638400
+        fund_update_t5_value(cur,fund_id,sm_time)
+        fund_update_b5_value(cur,fund_id,sm_time)
+        fund_update_value(cur,fund_id,sm_time)
+        fund_update_sm_rate(cur,fund_id,sm_rate)
         # fund_hold 更新
         db.ping(reconnect=True)
         cur.execute("select * from fund_hold where fund_id = '%s' "% (fund_id))
         fund_hold_list = cur.fetchall()
+        print(fund_hold_list)
         for h in fund_hold_list:
             fund_hold_id = int(h.get("id"))
             fund_hold_space_id = int(h.get("space_id"))
