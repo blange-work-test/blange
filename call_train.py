@@ -111,9 +111,9 @@ def robot_train():
         fund_id = f.get('id')
         db.ping(reconnect=True)
         cur.execute("select * from fund_commit where fund_id = %s order by time desc limit 1" % (fund_id))
-        release_value = cur.fetchall()
+        release_commit = cur.fetchall()
         cur.execute("select * from fund_commit where fund_id = %s order by time asc limit 1" % (fund_id))
-        begin_value = cur.fetchall()
+        begin_commit = cur.fetchall()
         # 数据爬虫
         url = "https://fund.eastmoney.com/pingzhongdata/%s.js" % (fund_id)
         # url = "https://fund.eastmoney.com/pingzhongdata/012348.js"
@@ -121,8 +121,10 @@ def robot_train():
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         # fund_commit 更新
         print(f)
-        if release_value:
-            release_value_time = release_value[0].get("time")
+        if release_commit:
+            release_value = release_commit[0]['value']
+            begin_value = begin_commit[0]['value']
+            release_value_time = release_commit[0]['time']
             value_list_str = re.findall(r'{"x":%s,"y":[0-9\.\"]*,"equityReturn":[0-9.\-\"]*,"unitMoney":[0-9.\-\"]*},({[\S]+])+;\/\*累计净值走势\*\/' % (str(release_value_time * 1000)),strhtml.text)
             if len(value_list_str):
                 value_list = ast.literal_eval('[' + value_list_str[0])
