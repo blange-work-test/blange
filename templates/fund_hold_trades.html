@@ -77,6 +77,7 @@
     {% elif action == 'add-html' %}
         <div style="width: 960px;" align="center">
 		<form action="/fund-holds/{{ fund_hold_id }}/trades" method="post">
+            <input type="hidden" name="_method" value="PUT" />
             持有id: <input type = "hidden" name = "id" value = "{{ fund_hold_id }} "> {{ fund_hold_id }}<br>
             交易时间: <input type="date" name="day" ><br>
             交易金额: <input type="text" name="hold",value="0" ><br>
