@@ -26,11 +26,23 @@ c -.- d
     - nginx.conf
 - home
   - admin
+  - blangeblue
     - blange
       - blange
         - wsgi.py
       - fund
-  - uwsgi.ini
+    - uwsgi.ini
+
+## linxu
+
+```
+mkdir 
+apt-get install -y python3-pip
+apt update
+apt install nginx
+```
+
+
 
 ## nginx
 
@@ -45,6 +57,8 @@ server{
                         uwsgi_param UWSGI_CHDIR /home/admin/foobar/myproject/ ;
                 }
         }
+sudo nginx -t
+sudo systemctl restart nginx
 ```
 
 ## uswgi.ini
@@ -63,6 +77,8 @@ stats = 127.0.0.1:9191
 
 ```python
 pip3 install django
+apt install git
+https://www.cnblogs.com/ayseeing/p/3572582.html
 ```
 
 ```django

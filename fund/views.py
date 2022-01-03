@@ -9,7 +9,7 @@ from call_train import add_trade_train
 from call_train import update_trade_train
 from  call_train import robot_train
 from  fund_hold import update_hold as fund_hold_update_hold
-from fund_mysql import db
+from fund_env import db
 from sql_meta import  t5_value_percent as sql_t5_value_percent
 from sql_meta import b5_value_percent as sql_b5_value_percent
 from sql_meta import fund_hold_lj_diff_share  as sql_fund_hold_lj_diff_share
@@ -288,7 +288,8 @@ def fund_hold(request,fund_hold_id,action):
         fund_hold_update_hold(cur, fund_hold_id)
         db.commit()
         db.close()
-        return redirect('http://127.0.0.1:8000/fund-holds/%d/trades/list-html'%(fund_hold_id))
+        return redirect('http://127.0.0.1:8000/fund-holds/%d/trades/list-html'%(fund_hold_id
+                                                                                ))
 
 
 # funds
