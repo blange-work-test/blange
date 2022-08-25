@@ -141,7 +141,6 @@ python manage.py runserver
 - `GET funds/reptile`:爬虫更新基金数据
 - `POST funds`:新增基金
 # todo
-test
 
 
 
